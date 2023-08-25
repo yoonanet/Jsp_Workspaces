@@ -1,0 +1,13 @@
+<Context> 
+<!-- Resource안에 name으로 jdbc/OracleDB 커넥션풀의 폴더위치를 셋팅해준다. 커넥션에 대한 객체를 미리 생성을 해두기 때문에 그에 대해 보관하는 장소를 풀이라고 하고, 그 풀의 위치를 적어준 것
+                  auth은 Container로 이름을 셋팅하고 type에 javax.sql.DataSource정보로 셋팅(이러한 정보들은 한번만 작성을 해놓는 것으로 고정되어져 있는 정보들이다.)
+                  driverClassName, url, username, password은 이전에 jdbc에서 지정을 해줬었음(기존 실습 확인하도록 하기)
+                  maxActive: 커넥션풀로 연결을 하고자할 때 최대 피크시간때 클라이언트가 요청을 해오면 최대 몇개까지로 활성화해놓을지에 대한 셋팅 정보를 지정한다.
+                  maxIdle:클라이언트의 피크시간이 지나고 난 후에 풀의 반납을 할 때 최대로 유지될 수 있는 연결의 객체를 몇개로 최소한 남겨둘지의 정보 셋팅
+                  
+                  이 파일은 데이터베이스에 대한 정보를 저장하는 것임. -->
+	<Resource name="jdbc/OracleDB" auth="Container" type="javax.sql.DataSource" 
+	          driverClassName="oracle.jdbc.driver.OracleDriver" url="jdbc:oracle:thin:@localhost:1521:xe" 
+	          username="scott" password="tiger"
+	          maxActive="500" maxIdle="100"/>
+</Context>

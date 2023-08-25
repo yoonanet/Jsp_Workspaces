@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID" version="4.0">
+  <display-name>chap16</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+  </welcome-file-list>
+  
+  <!-- [예시를 통해 필터의 사용법을 숙지하도록 한다.]
+  	   아래와 같은 코드를 작성하여 톰캣에게 필터를 사용을 알리도록 한다. 
+       => 서블릿의 구조와 동일함 (url 패턴에 등록을 해두면 그에 대한 요청이 왔을 때 설정한 class의 자료형 안에 메소드를 호출하도록 했다. => 서블릿파일에서 어노테이션으로 대체 가능) 
+       
+       filter와 filter-mapping에서 filter-name은 동일하게 작성해주도록 해야한다.(한쌍으로 만들어주도록 함.)
+       name의 이름을 똑같이 만들어놓으면 filter와 filter-mapping이 한 그룹이 되는 것이다. => 이때의 이름은 기억하기 좋은 이름으로 지어주면 된다. 단, 두 이름이 동일해야 함.
+       => 한쌍으로 만들어 놓는다면 클라이언트의 요청이 왔을 때 로그인을 한 사람만 서비스를 해야한다면 그에 대한 정보를 등록하도록 하기 위함이다. => 구동되는 필터를 사용하기 위함
+       
+       서블릿에서 서비스로 요청이 넘어오게 되면 서비스에서 먼저 해야 하는 것이 로그인의 여부를 확인해야 함. 이 기능이 execute에 기능으로 반복작성이 되어지게 될 것임
+       그것을 필터라는 기능을 이용해서 사전에 먼저 처리를 하고자 하는 것이다.
+       로그인이 필요한 기능들은 판단하는 기준이 서버입장에서는 요청해오는 uri정보에서만 판단하게 될 것이다. (클라이언트의 요구사항!!)
+       그렇기 때문에 url-pattern에 클라이언트가 요청을 해올 때 필터를 언제 처리할지에 대한 uri정보를 넣어주도록 한다.
+       => board라는 폴더이름 밑에 오는 모든 요청정보를 필터링하여 처리하도록 등록함. - 사전에 로그인여부를 처리할 기능들은 board폴더 안에 집어넣어서 처리할 의도인 것이다.
+  -->
+  <filter>
+  	<filter-name>LoginCheck</filter-name>
+  	<filter-class>filter.LoginCheckFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+  	<filter-name>LoginCheck</filter-name>
+  	<url-pattern>/board/*</url-pattern> 
+  	<!-- 쿼리문자열로 브라우저가 요청을 해올 때 board라는 이름이 포함만 되어져 있다면 그에 대한 모든 요청 정보를 필터링하여 등록한 클래스의 메소드(이벤트)를 호출하겠다는 의미 
+  	     (사전에 로그인하는 사람인지 체크하는 기능을 클래스에 넣어주도록 한다.) -->
+  </filter-mapping>
+</web-app>

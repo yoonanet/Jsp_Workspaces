@@ -1,0 +1,128 @@
+package net.board.action;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("*.bo") //앞에 무엇이 오든 상관없이 끝나는 뒤에가 .bo(게시판관련된기능)로 끝나는 요청이기만 하면 내 서블릿에서 다 처리하겠다는 의미이다. 
+public class BoardFrontController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	//브라우저에 사용자로부터 전달받은 정보를 노출시킬 것인지의 여부 때문에 전송방식을 두 가지로 나뉘게 된 것이다.
+	//요청을 받은 서버입장에서는 get방식이든 post방식이든 처리되는 동작에서 구별을 할 이유가 없음. (톰캣입장에서는 똑같음. 단지 post방식에서 한글이 깨지지 않게끔 인코딩을 지정하는 것만 다를뿐.)
+	/* @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response) */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//System.out.println("doGet() 호출.");
+		doProcess(request, response); //request와 response를 다시 전달하는 것임.
+	}
+
+	/* @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response) */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//System.out.println("doPost() 호출.");
+		doProcess(request, response);
+	}
+	
+	//get방식이든 post방식이든 이 doProcess메소드를 공통적으로 호출하여 하나로 처리하고자 하는 것이다.	=> CRUD와 같은 기능들을 이 메소드 안에서 다 처리를 하면 된다.
+	//.bo로 요청이 오면 다 이 메소드를 호출하려고 할텐데, 그에 대한 기능을 구분되어야 할 것이다. => 어떤 기능인지에 대한 정보를 알아야 한다.
+	protected void doProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//.bo 앞에 있는 클라이언트가 요청하는 정보를 알고 싶은 것이 목적이기 때문에 (클라이언트의 모든 정보를 request객체에 담아서 전달)
+		//request객체의 getRequestURI메소드를 활용하도록 한다. => 포트번호 이후로부터의 모든 정보를 반환해줌.
+		String requestURI = request.getRequestURI();   // 이 메소드는 /chap15_Board/BoardWrite.bo를 반환해줄 것이다.
+		System.out.println("URI : " + requestURI);
+		String contextPath = request.getContextPath(); // 이 메소드는 /chap15_Board를 반환해줄 것이다. (프로젝트 이름 반환하는 것임.)
+		System.out.println("path : " + contextPath);
+		
+		String command = requestURI.substring(contextPath.length()); //substring메소드: 인덱스값을 넣어주면 인덱스의 이후부터의 문자열을 꺼내와주게 된다.
+		//실질적인 클라이언트의 요청사항을 파싱(꺼내오는 것)하는 것이다.(서블릿에 첫번째 주요 기능!! -> 어떤 요청을 해온 것인지에 대한) => BoardWrite.bo부분만 가져오도록 하는 것!!
+		//이후, 파싱한 정보를 통해 DB와의 연동을 하는 것까지의 구성이 되어야 한다.
+		System.out.println("command : " + command); // command : /BoardWrite.bo반환 => 사용자의 요청정보가 담긴 것임.
+		
+		
+		
+		if(command.equals("/BoardWrite.bo")) { //command에 담긴 데이터가 전달한 내용과 동일한지 확인 => 글쓰기
+		//글쓰기 양식을 화면으로 보내줘야 함. (DB와 연동할 필요없음. 양식이기 때문)	
+		//getRequestDispatcher메소드: 이동해가서 서비스하고 싶은 페이지에 대한 정보를 입력으로 넣어주면 된다. (최종적으로 서비스할 페이지에 대한 정보를 경로와 함께 전달)
+		//                            메소드를 통해서 호출을 해오면 이 메소드안에 의존적인 클래스가 정의되어 있어서 자체적으로 new해서 메모리를 할당하여 
+		//                            필요한 데이터들을 그 메모리에 보관하고 시작주소값을 반환해주는 형식으로 객체를 반환 => 이 메소드도 동일함.
+			RequestDispatcher dispather = request.getRequestDispatcher("./board/qna_board_write.jsp"); //내가 응답으로 보낸 페이지의 정보를 가진 객체가 된다.
+			dispather.forward(request, response); 
+			//jsp의 forward액션태그(if문을 통해 이동해갈 주소를 넣어줬었고, 조건에 따라 페이지로 이동했음)와 동일 
+			// => 즉, 페이지 이동과 관련된 기능을 제공해주는 메소드임. (서블릿을 통해 jsp를 적용하는 방법.)
+		
+		
+		}else if(command.equals("/BoardAddAction.bo")) { //폼에 작성된 내용이 전달됨.
+		//데이터를 꺼내와서 꺼내온 데이터를 DB에 저장해주는 비즈니스 로직을 작성해줘야 한다. => DB에 저장할 테이블부터 만들어줘야함.	
+			//System.out.println("==> /BoardAddAction.bo");
+			//DB와 연동하려면 자바빈(데이터를 처리할 모델)을 먼저 만들어야 함 (이 자바빈과 board테이블이 연동하여 같이 동작시킬 목적) 
+			//자바빈에 데이터를 꺼내와서 저장 -> 최종적으로 DB에 데이터 저장
+
+			
+/*  파싱된 어떤 요청인지 판단했을 때 최종적으로 데이터베이스에 저장을 하겠다라고 한다면 실질적으로 서블릿은 CRUD를 처리하는 기능으로 정의하지는 않는다. 
+    (일반적으로 서블릿은 파싱의 기능까지만 담당한다!!)
+	DB까지 연동하여 처리하는 다음단계의 구조는 어떻게 가져가야 하느냐? 
+	파싱의 1단계, DB와 관련하여 그 요청정보를 보고 실질적인 클라이언트의 요청사항을 처리하는 처리레이어, 이 처리레이어를 일반적으로 서비스레이어라고 부른다.
+	요청사항을 파싱한 후 바로 jsp페이지를 응답으로 보내줬음. user의 화면을 바로 서비스하는 레이어라고 하여 프리젠테이션레이어라고 한다.
+	=> 사용자 요청에 따라 바로 파싱하여 페이지 전달. (응답에 최선을 다함. 클라이언트의 요청사항을 정확하게 파싱해서 알려주는 것이 역할임)	
+	
+	그 요청사항이 DB와 연동하여 작업을 해야하는 요청이라고 한다면 그 요청을 실질적으로 처리하는 레이어를 서비스레이어라고 불러준다.
+	이 서비스레이어에서 실질적으로는 클라이언트가 보내온 데이터를 꺼냄. 꺼내온 데이터를 최종적으로 DB에 저장!!
+	=> 글을 등록하는 것이 클라이언트의 요구사항이고 이 부분을 서비스레이어에서 구현해주는 것이다.
+	   만약 글을 읽어달라는 select요청일 때도 DB와 관련이 있는 요청이기 때문에 서비스레이어에 알려주게 되는 것이고,
+	   서비스레이어가 DB에서 데이터를 가지고 와서 화면을 응답으로 보내주게 되는 것이다.
+	=> 사용자의 요청사항을 실질적인 처리를 수행하는 이처리를 하는 백엔드단의 기술에서 
+	   클라이언트의 작업을 실제 수행하는 레이어라고 하여 범용적으로 비즈니스로직(비즈니스레이어)이라고도 부른다.
+	실질적으로 코드를 구성할 때는 서비스라는 용어를 많이 사용하고, 레이어로 얘기할 때는 프리젠테이션 레이어, 비스니스 레이어라고 얘기한다. 
+	
+	jdbc에서는 자바빈은 VO, DTO라는 이름을 붙여서 클래스를 정의했고, 실질적인 CRUD의 기능은 DAO라는 이름을 붙여서 클래스를 정의를 했었다.
+	DAO로 실질적인 데이터베이스와 작업하게끔 정의되는 이 클래스가 포함되는 레이어는 데이터를 영구적으로 보관한다.
+	내가 삭제하기 전까지는 데이터를 영구적으로 보관하는 것임. 이 레이어는 repository, persistance(연속적이고, 반영구적인)라고 혼용하여 불러주고 있다.
+	=> 3개의 레이어구조로 구성을 해주고 있는 것이다!!
+	
+	뭔가 화면이 띄워진 상태에서 띄워진 메뉴화면에 번호를 눌러서 만약 데이터를 저장하겠다고 한다면 저장하는 DAO만 호출을 하면 될 것이라고 생각할 수도 있다.
+	
+	쇼핑몰을 생각해보면 이 DB에는 회원에 관한 테이블, 게시판에 내용을 저장할 테이블, 상품 목록 테이블등의 테이블이 필요할 것이다.
+	기능에 따라서 아주 많은 데이터를 관리해야 하므로 그 관리되는 데이터만큼 테이블이 추가가 되어질 것이다.
+	그리고 그때마다 각각의 데이터를 CRUD할 수 있는 DAO가 하나씩 같이 자바빈과 함께 연결되는 구조로 persistance영역에 레이어가 구성이 될 것이다.
+	즉, persistance영역에 레이어는 테이블 하나당 DAO가 하나씩 구성이 돼서 그 DAO는 서로 독립적인 동작이 되게끔 설계가 되어져야 하는 것이다. (DAO가 하나만 구성된다면 기능이 폭파할 수 있음 -> 코드 전체를 들여다봐야함. 관리가 어려움)
+	하나의 테이블당 하나의 DAO가 구성을 하여 최적화되어지게끔 모듈화가 되어야 나중에 변경사항이 있어도 그 모듈만 들여다보고 수정을 할 수 있게끔 구성을 해주는 것이 좋다.
+	
+	그러다보니 회원관리용DAO, 상품관리용DAO 별도로 설계가 되어질 것이다.
+	지금 현재 쇼핑몰에 기존 쇼핑몰에서는 상품을 클릭해서 구매하는 구매정보들이 잘 서비스가 되어지고 있었음.
+	이 사이트들이 매출을 올리겠다고 할인 특가, 보너스 증정이라는 이벤트를 진행. 기존에는 a상품을 구매자가 구매를 하겠다고 요청을 하면 구매에 대한 처리만 하면 됐었는데
+	이 구매를 했을 때 보너스 1000점을 드리겠다고 했다면 보너스에 대한 정보는 개인이 가지고 있는 또 다른 테이블에서 데이터들이 관리가 되어질 수 있다.
+	그럴 경우라면 요청을 받았을 때 상품처리에 기존에 처리를 수행하고, 추가적으로 포인트라는 점수를 다시 그 데이터에 추가를 해줘야 하는 것임.
+	
+	프리젠테이션 레이어는 응답에 최선을 다하고 클라이언트의 요청을 정확하게 파악해서 알려주라는게 임무인데 이미 그 임무만으로도 벅참
+	요청파악과 파악한 요청을 기반으로 로직까지 구현을 해야한다면 얘의 역할이 너무 광범위해짐. 따라서 이 역할을 비즈니스로직의 서비스에게 넘기라는 것이다.
+	그래서 서비스에서 요청만 받으면 이 요청은 상품도 구매하고 거기에 보너스 데이터도 업데이트하라는 것을 파악하고 
+	요청하고 오면 다음명령으로 보너스 점수를 업데이트하고 다시 올 수 있게끔 서비스에서 처리를 하는 것이다.
+	즉, 어떤 요청인지만 전달받고 전달받은 요청의 실질적인 로직(기능)은 서비스에서 처리하라는 것이다.
+	DAO에 저장하고 와서 끝나는 것이 아니라 그 상품에 대한 개인들마다 포인트점수를 따로 관리하게끔 테이블이 추가되어져 있다면 그 테이블에 가서 포인트를 추가해주게 됨
+	
+	repository레이어에서는 테이블마다 DAO가 준비되어져 있고 그 DAO를 매니지먼트하는 역할을 서비스가 하게끔 구조를 잡으라고 하는 용도인 것이다.
+	
+	지금 구성한 서블릿은 순수 파싱과 그에 대한 화면 응답에 대한 부분에만 최적화되게끔 기능을 구현하는 것이다.
+	나머지 요청에 대한 정보는 비즈니스로직에 해당하는 서비스라는 레이어를 구성할 것이고,
+	그 구성된 레이어를 바탕으로 우리가 만들어놓은 자바빈과 DAO를 서비스해서 내니지먼팅해서 최종적인 결과가 나오면
+	그것을 화면에 실어서 응답으로 보내주려고 하는 것이다.
+	
+	테이블 만듦 -> 테이블에 매칭될 자바빈 만들기 -> 자바빈과 테이블을 연관지어줄 CRUD의 DAO를 구성 -> 서비스를 구성하면서 매니지먼트함. 
+	(이 부분이 MVC패턴에서의 백엔드단의 기능을 완성해가는 프로세서인 것이다.)
+*/
+			
+		
+		
+		}else if(command.equals("/BoardList.bo")) { //게시글의 목록 보기(전체목록)
+		//추가할 기능들은 수정, 삭제, 한게시물의 상세 목록등등 => 기능이 확장될 때마다 else if문을 통해 추가해가면 됨
+			
+		}	
+			
+	}
+	
+	
+}

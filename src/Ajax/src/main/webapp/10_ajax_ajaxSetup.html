@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Ajax에 대한 global 옵션 설정-$.ajaxSetup()</title>
+
+<!-- 요청에 설정 부분을 범용적으로 처리하여 코드를 간단하게 구성하고자 함. -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script> 
+<script type="text/javascript">
+$(function(){ 
+	$('#submit').click(function(){
+		var id = $('#id').val(); 
+		var pw = $('#password').val();
+		var sendData = 'userId='+id+'&userPw='+pw;
+		
+		//ajaxSetup함수: global의 옵션을 설정을 해서 범용적으로 사용할 수 있도록 한다. (설정에 대한 셋팅일 뿐임)
+		//입력으로 객체를 전달할 수 있음(키와 벨류형태로 작성)
+		//type => 전송방식에 대해 셋팅해주면 됨, url => 서버에 요청할 url정보, dataType => jsp를 통해서 처리되어지는 주고받는 데이터의 타입
+		//success => 서버와의 정상적인 수신이 되면 등록한 함수를 호출하게 된다.
+		$.ajaxSetup({
+			type:"post",
+			url:"loginCheck.jsp",
+			dataType:"text",
+			success:function(msg){
+				$('#message').html(msg);
+			}
+		});
+		
+		//실질적으로 서버에 대한 요청은 ajax함수를 활용하도록 한다.
+		$.ajax({
+			data:sendData, 
+			//data속성에 쿼리문을 지정해주면 해당쿼리문을 가지고 자동으로 ajaxSetup에 설정되어진 정보들을 함께 가지고 서버에 요청하게끔 처리가 되어진다. 
+			//(서버에 요청시에 ajax함수를 통해 요청할 때 최소한의 정보(쿼리문)을 알려주도록 하면 ajaxSetup에서 설정한 정보들이 함께 처리가 되어지는 구조인 것이다.)
+			//ajax에서 동일한 구조의 코드를 작업하게 된다면 반복된 코드를 작성하지 않고 최소화하면서 공유하는 개념으로 설정을 셋팅하여 처리하도록 하는 방법인 것이다.
+		});
+		
+		return false;
+		
+	});
+});
+</script>
+
+</head>
+<body>
+
+	<form action=""> 
+		<label>아 이 디 : </label>
+		<input type="text" name="id" id="id"><br>
+		<label>비밀번호 : </label>
+		<input type="password" name="password" id="password"><br>
+		<input type="button" id="submit" value="로그인">
+	</form>
+	
+	<div id="message">더조은 컴퓨터 아카데미</div>
+
+</body>
+</html>

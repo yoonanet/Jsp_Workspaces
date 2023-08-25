@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>엘리먼트 형식의 값을 배열 형태로 변환-serializeArray()</title>
+
+<style>
+	div {
+		font-weight:bold;
+		color:red;
+		font-size:16px;
+	}
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script> 
+<script type="text/javascript">
+$(function(){ 
+	$('#submit').click(function(){
+		$('#result').empty(); //empty(): 출력되는 텍스트가 있다면 깨끗하게 지워주도록 함
+		
+		var form_data = $('form').serializeArray(); //serializeArray: 파라메타의 지정한 값들을 배열의 형태로 반환해준다.
+		//each함수를 활용해서 serializeArray를 통해 반환되어져 온 배열의 데이터를 순차적으로 반복하면서 지정한 함수를 수행하도록 한다.
+		$.each(form_data, function(index, item){
+			$('#result').append(item.name+" = "+item.value+"<br>");
+		});
+	});
+	
+});
+</script> 
+
+</head>
+<body>
+
+
+	<form action="">
+		<input type="hidden" name="seq" value="1">
+		<lable>이름을 입력하세요: </lable>
+		<input type="text" name="name"><br>
+		<lable>비밀번호를 입력하세요: </lable>
+		<input type="password" name="pw"><br>
+		<input type="checkbox" name="hobby" value="music">음악감상
+		<input type="checkbox" name="hobby" value="yoga">요가
+		<input type="checkbox" name="hobby" value="reading">독서<br>
+		<input type="button" id="submit" value="회원 가입">		
+	</form>
+	
+	<hr>
+	
+	<div id="result"></div>
+
+
+</body>
+</html>

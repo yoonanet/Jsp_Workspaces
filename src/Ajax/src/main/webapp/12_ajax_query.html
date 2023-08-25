@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>엘리먼트 형식의 값을 쿼리 스트링으로 변환-serialize()</title>
+
+<!-- serialize는 jQuery에서 제공하는 기능임 -->
+<style>
+	div {
+		font-weight:bold;
+		color:red;
+		font-size:16px;
+	}
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script> 
+<script type="text/javascript">
+$(function(){ 
+	$('#submit').click(function(){
+		var form_data = $('form').serialize();//serialize로 처리되어지는 값을 변수에 담음 
+		//=> serialize(jQuery제공함수) : 브라우저를 통해서 서버에 요청할 때의 쿼리문자열을 자동으로 생성하여 반환해주는 함수임
+		//                               여기서 반환되어지는 값을 쿼리스트링이라고 불리는 것임
+		$('#result').text(form_data);
+	});
+});
+</script> 
+
+</head>
+<body>
+
+	<form action="">
+		<input type="hidden" name="seq" value="1"> 
+		<!-- hidden: 눈에는 보여지지 않지만 form태그에 감싸져있어서 서비스를 누르면 hidden의 양식태그도 서버로 전달되어지게끔 동작됨
+		             ui상에 보여지는 형태가 아니기 때문에 사용자로부터 전달받을 목적이 아닌 우리가 임의의 파라메타이름을 지정하여
+		             전송하고 싶은 값을 입력양식태그에 담아서 전달하고 싶을 때 활용됨 -->
+		<lable>이름을 입력하세요: </lable>
+		<input type="text" name="name"><br>
+		<lable>비밀번호를 입력하세요: </lable>
+		<input type="password" name="pw"><br>
+		<input type="checkbox" name="hobby" value="music">음악감상
+		<input type="checkbox" name="hobby" value="yoga">요가
+		<input type="checkbox" name="hobby" value="reading">독서<br>
+		<input type="button" id="submit" value="회원 가입">		
+	</form>
+	
+	<hr>
+	
+	<div id="result"></div>
+
+</body>
+</html>

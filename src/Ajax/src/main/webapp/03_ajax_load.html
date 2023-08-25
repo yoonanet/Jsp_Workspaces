@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>서버의 데이터 일부만 대상 엘리먼트에 삽입하기-load()</title>
+
+<style type="text/css">
+	div {
+		width:180px; height:80pt;
+		margin: 3px; float: left;
+	}
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script> 
+<script type="text/javascript">
+$(function(){
+	$('#menu1').click(function(){ //클릭이벤트가 발생되어지면 이벤트 핸들러를 구현하도록 함.
+		$('#message1').load('menu.html'); //load메소드의 입력으로 서버로 부터 요청하고자 하는 정보를 지정해주도록 한다.
+		return false; 
+		//웹표준에서는 이벤트가 발생했을 때 그 태그를 감싸고 있는 태그들이 있다면 그 이벤트를 전달하는 구조로 처리가 되어지고 있었음
+		//내 태그 안에서만 이벤트를 발생시키고, 나를 감싸고 있는 태그쪽으로 클릭이벤트를 전달하고 싶지 않다고 할 때 이벤트안에 return값을 false로 반환하도록 한다.
+	});
+	
+	$('#menu2').click(function(){
+		$('#message2').load('menu.html li'); 
+		//파일에 대한 정보를 요청하면서 li만 로드해달라고 요청 => 특정 태그만 지정해서 가져오라는 부분적인 처리도 가능하게끔 기능을 제공해주고 있는 것임.
+		return false;
+	});
+});	
+</script>
+
+</head>
+<body>
+	
+	<div>
+		<a href="#" id="menu1">메뉴 보기1</a><p></p>
+		<span id="message1"></span>
+	</div>
+	
+	<div>
+		<a href="#" id="menu2">메뉴 보기2</a><p></p>
+		<span id="message2"></span>
+	</div>
+	
+</body>
+</html>

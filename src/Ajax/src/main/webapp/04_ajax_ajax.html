@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Ajax 요청 직접 제어하기 - $.ajax()</title>
+
+<style type="text/css">
+	div {
+		width:180px; height:80pt;
+		margin: 3px; float: left;
+	}
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script> 
+<script type="text/javascript">
+$(function(){
+	$('#menu1').click(function(){
+		$.ajax({ //JQuery제공 함수_ajax() => 입력으로 객체를 전달할 수 있음(한번에 여러 속성들을 동시에 적용할 수 있는 장점)
+		//ajax의 객체를 전달할 때 셋팅할 수 있는 속성들이 있음 => url, dataType, success:function(){}
+			url:'menu.html', //요청하고자 하는 페이지
+			dataType:'html', //텍스트타입으로 페이지를 요청한다는 의미로 html을 넣어주도록 함
+			success:function(data){
+				$('#message1').html(data); //html메소드를 통해 입력으로 전달받은 데이터를 출력하도록 한다.
+			} //서버로부터 성공적으로 응답을 받으면 이 함수를 실행해달라고 함(입력으로 서버가 전송해온 데이터를 담아서 함수를 호출하도록 한다.)
+		});
+		
+		return false; 
+		//끝나기 직전에 내 부모쪽으로 이벤트를 전달하지 않도록 함.
+	});
+	
+	$('#menu2').click(function(){
+		$.ajax({ 
+			url:'menu.html', 
+			dataType:'html', 
+			success:function(data){
+				$('#message2').html($(data).find('li')); //jQuery를 통해서 데이터만 범위를 잡고 find()함수를 통해서 li태그만 찾아달라고 요청하도록 한다. 
+			}
+		});
+		
+		return false; 
+	});
+	
+});
+</script>
+
+</head>
+<body>
+	
+	<div> <!-- 많이 활용) select태그로 구성을 하고, 서버에 데이터를 담아서 선택 항목에 따라서 ajax를 통해 동적으로 화면을 보여주도록 한다. -->
+		<a href="#" id="menu1">메뉴 보기1</a><p></p>
+		<span id="message1"></span>
+	</div>
+	
+	<div>
+		<a href="#" id="menu2">메뉴 보기2</a><p></p>
+		<span id="message2"></span>
+	</div>
+	
+</body>
+</html>

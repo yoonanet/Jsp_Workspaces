@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<items>
+<!-- json은 key, value 형태에서 객체로 선언되어진 형태였지만 xml은 태그의 형태로 데이터들을 형식으로 지정해주는 포맷이다. 
+     => 어떠한 포맷으로 정의하든 상관없지만 규칙성을 가져야 한다. 
+     (응답을 받은 쪽에서는 자바스크립의 형태로 처리를 해주기 때문에 그때 일관성있는 포맷으로 데이터가 작성이 되어져 있어야
+     자바스크립트에서 이 데이터들을 규칙성있게 꺼내와서 일관된 형태로 화면에 출력해줄 수 있을 것이다.) -->
+	<item id="1" name="레몬">
+		<price>3000</price>
+		<description> 레몬에 포함되어 있는 쿠엔산은 피로회복에 좋다. 비타민C도 풍부하다. </description>
+	</item>
+
+	<item id="2" name="키위">
+		<price>2000</price>
+		<description> 비타민C가 매우 풍부하다. 다이에트와 미용에도 매우 좋다. </description>
+	</item>
+
+	<item id="3" name="블루베리">
+		<price>5000</price>
+		<description> 블루베리에 포함된 anthocyanin(안토시아닌)은 눈피로에 효과가 있다. </description>
+	</item>
+
+	<item id="4" name="체리">
+		<price>5000</price>
+		<description> 체리는 맛이 단 성분이 많고 피로회복에 잘 듣는다. </description>
+	</item>
+
+	<item id="5" name="메론">
+		<price>5000</price>
+		<description> 메론에는 비타민A와 칼륨이 많이 포함되어 있다. </description>
+	</item>
+
+	<item id="6" name="수박">
+		<price>15000</price>
+		<description> 수분이 풍부한 과일이다.</description>
+	</item>
+</items> 
